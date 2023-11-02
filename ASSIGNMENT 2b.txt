@@ -1,0 +1,158 @@
+
+
+Subject: Operating System Lab
+
+Problem Statement: Process control system calls: The demonstration of FORK, EXECVE and 
+WAIT system calls along with zombie and orphan states. B. Implement the C program in 
+which main program accepts an array. Main program uses the FORK system call to create a 
+new process called a child process. Parent process sorts an array and passes the sorted array 
+to child process through the command line arguments of EXECVE system call. The child 
+process uses EXECVE system call to load new program which display array in reverse order.
+
+
+//Code
+
+Ass2b2 -
+#include<stdio.h>
+#include<sys/types.h>
+#include<unistd.h>
+#define maxsize 100
+int bubble_sort_asc(int a[],int n)
+{
+int i,j,temp;
+for(i=0;i<n;i++)
+{
+for(j=0;j<n-i-1;j++)
+{
+if(a[j]>a[j+1])
+{
+temp=a[j];
+a[j]=a[j+1];
+a[j+1]=temp;
+}
+}
+}
+}
+int display(int a[],int n)
+{
+printf("elements in array in ascending order are : ");
+for(int i=0;i<n;i++)
+{
+printf("%d\n",a[i]);
+}
+}
+int main(int argc,char *argv[])
+{
+int i,j=2,l,k;
+int n=argc-2;
+int a[n];
+char *args[ n + 1 ];
+args[0]=argv[1];
+for(i=1;i<=n;i++,j++)
+{
+args[i]=argv[j];
+}
+args[i]=(char*)0;
+for(l=0,i=1;i<=n;i++,l++)
+{
+a[l]=atoi(args[i]);
+}
+bubble_sort_asc(a,n);
+display(a,n);
+for(l=0,i=1;i<=n;i++,l++)
+{
+sprintf(args[i],"%d",a[l]);
+}
+pid_t pid;
+pid=fork();
+if(pid==0)
+{
+printf("i am child,my pid is %d \n",getpid());
+printf("i am parent,my ppid is %d \n",getppid());
+execve(argv[1],args,NULL);
+}
+else
+{
+k=wait(0);
+printf("i am parent,my pid is %d \n",getpid());
+printf("i am great parent,my ppid is %d \n",getppid());
+}
+return 0;
+}
+Ass2b2-
+#include<stdio.h>
+#include<stdlib.h>
+#define maxsize 100
+int bubble_sort_des(int a[],int n)
+{
+int i,j,temp;
+for(i=0;i<n;i++)
+{
+for(j=0;j<n-i-1;j++)
+{
+if(a[j]<a[j+1])
+{
+temp=a[j];
+a[j]=a[j+1];
+a[j+1]=temp;
+}
+}
+}
+}
+int display(int a[],int n)
+{
+printf("elements in array in descending order are : ");
+for(int i=0;i<n;i++)
+{
+printf("%d\n",a[i]);
+}
+}
+int main(int argc, char *argv[])
+{
+int i,j=1,l,key;
+int n=argc-1;
+int a[n];
+char *args[ n + 1 ];
+printf("pid of 2nd program is=%d\n",getpid());
+for(i=0;i<=n;i++,j++)
+{
+args[i]=argv[j];
+}
+args[i]=(char*)0;
+for(l=0,i=0;i<n;i++,l++)
+{
+a[l]=atoi(args[i]);
+}
+bubble_sort_des(a,n);
+display(a,n);
+}
+Output
+student@student:~/skn$ gcc ass2b1.c -o ass2b1
+ass2b1.c: In function ‘main’:
+ass2b1.c:50:8: warning: implicit declaration of function ‘atoi’ [-Wimplicit-function declaration]
+ 50 | a[l]=atoi(args[i]);
+ | ^~~~
+ass2b1.c:70:5: warning: implicit declaration of function ‘wait’ [-Wimplicit-function declaration]
+ 70 | k=wait(0);
+ | ^~~~
+student@student:~/skn$ gcc ass2b2.c -o ass2b2
+ass2b2.c: In function ‘main’:
+ass2b2.c:40:38: warning: implicit declaration of function ‘getpid’ [-Wimplicit-function declaration]
+ 40 | printf("pid of 2nd program is=%d\n",getpid());
+ | ^~~~~~
+student@student:~/skn$ ./ass2b1 ass2b2 2 5 3 1 7
+elements in array in ascending order are : 1
+2
+3
+5
+7
+i am child,my pid is 40167
+i am parent,my ppid is 40166
+pid of 2nd program is=40167
+elements in array in descending order are :7
+5
+3
+2
+1
+i am parent,my pid is 40166
+i am great parent,my ppid is 32814

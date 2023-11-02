@@ -1,0 +1,123 @@
+
+
+
+Subject: Operating System Lab
+
+Problem Statement: A. Thread synchronization using counting semaphores. Application to 
+demonstrate: producer/consumer problem with counting semaphores and mutex.
+
+//Code
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/syscall.h>
+#include<pthread.h>
+#include<semaphore.h>
+void *producer();
+void *consumer();
+typedef struct{
+int buff[20];
+sem_t full,empty;
+}shared;
+shared sh;
+int item;
+int in=0,out=0;
+sem_t mutex;
+int main()
+{
+pthread_t ptid1,ptid2,ctid1;
+sem_init(&sh.empty,0,20);
+sem_init(&sh.full,0,0);
+sem_init(&mutex,0,1);
+pthread_create(&ptid1,NULL,producer,NULL);
+pthread_create(&ptid2,NULL,producer,NULL);
+pthread_create(&ctid1,NULL,consumer,NULL);
+pthread_join(ptid1,NULL);
+pthread_join(ctid1,NULL);
+pthread_join(ptid2,NULL);
+return 0;
+}
+void *producer()
+{
+int ptid;
+while(1)
+{
+item=in;
+sem_wait(&sh.empty);
+sem_wait(&mutex);
+sh.buff[in++]=item;
+printf("\nproducer thread id and producer
+item:%d,%d\n",syscall(SYS_gettid,ptid),item);
+sem_post(&mutex);
+sem_post(&sh.full);
+sleep(2);
+}
+}
+void *consumer()
+{
+int ctid;
+while(1)
+{
+while(out<=in)
+{
+sem_wait(&sh.full);
+sem_wait(&mutex);
+item=sh.buff[out++];
+printf("\nconsumer thread id and producer 
+item:%d,%d\n",syscall(SYS_gettid,ctid),item);
+sem_post(&mutex);
+sem_post(&sh.empty);
+sleep(2);
+}
+}
+}
+Output
+student@student:~/skn$ gcc ass4.c -lpthread
+ass4.c: In function ‘producer’:
+ass4.c:45:59: warning: implicit declaration of function ‘syscall’ [-Wimplicit-function declaration]
+ 45 | printf("\nproducer thread id and producer 
+item:%d,%d\n",syscall(SYS_gettid,ptid),item);
+ | ^~~~~~~
+ass4.c:48:3: warning: implicit declaration of function ‘sleep’ [-Wimplicit-function declaration]
+ 48 | sleep(2);
+ | ^~~~~
+student@student:~/skn$ ./a.out
+producer thread id and producer item:2597,0
+producer thread id and producer item:2598,1
+consumer thread id and producer item:2599,0
+producer thread id and producer item:2597,2
+producer thread id and producer item:2598,3
+consumer thread id and producer item:2599,1
+producer thread id and producer item:2597,4
+consumer thread id and producer item:2599,2
+producer thread id and producer item:2598,2
+producer thread id and producer item:2597,6
+producer thread id and producer item:2598,7
+consumer thread id and producer item:2599,3
+producer thread id and producer item:2597,8
+consumer thread id and producer item:2599,4
+producer thread id and producer item:2598,4
+producer thread id and producer item:2597,10
+producer thread id and producer item:2598,11
+consumer thread id and producer item:2599,2
+producer thread id and producer item:2597,12
+consumer thread id and producer item:2599,6
+producer thread id and producer item:2598,6
+producer thread id and producer item:2597,14
+consumer thread id and producer item:2599,7
+producer thread id and producer item:2598,15
+producer thread id and producer item:2597,16
+producer thread id and producer item:2598,17
+consumer thread id and producer item:2599,8
+producer thread id and producer item:2597,18
+producer thread id and producer item:2598,19
+consumer thread id and producer item:2599,4
+producer thread id and producer item:2597,20
+producer thread id and producer item:2598,21
+consumer thread id and producer item:2599,10
+producer thread id and producer item:2597,22
+The futex facility returned an unexpected error code.
+consumer thread id and producer item:2599,11
+producer thread id and producer item:2598,11
+The futex facility returned an unexpected error code.
+Aborted (core dumped)

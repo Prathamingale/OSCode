@@ -1,0 +1,140 @@
+
+
+Subject: Operating System Lab
+
+Problem Statement: Process control system calls: The demonstration of FORK, EXECVE and 
+WAIT system calls along with zombie and orphan states. A. Implement the C program in 
+which main program accepts the integers to be sorted. Main program uses the FORK system 
+call to create a new process called a child process. Parent process sorts the integers using 
+sorting algorithm and waits for child process using WAIT system call to sort the integers 
+using any sorting algorithm. Also demonstrate zombie and orphan states.
+
+
+//Code:
+
+#include<sys/types.h>
+#include<stdio.h>
+#define maxsize 100
+int bubble_sort_asc(int A[],int n)
+{
+int i,j,temp;
+for(i=0;i<n;i++)
+{
+for(j=0;j<n-i-1;j++)
+{
+if(A[j]>A[j+1])
+{
+temp=A[j];
+A[j]=A[j+1];
+A[j+1]=temp;
+}
+}
+}
+}
+int bubble_sort_des(int A[],int n)
+{
+int i,j,temp;
+for(i=0;i<n;i++)
+{
+for(j=0;j<n-i-1;j++)
+{
+if(A[j]<A[j+1])
+{
+temp=A[j];
+A[j]=A[j+1];
+A[j+1]=temp;
+}
+}
+}
+}
+int accept(int A[],int n)
+{
+printf("enter elements in array : ");
+for(int i=0;i<n;i++)
+{
+scanf("%d",&A[i]);
+}
+}
+int Display(int A[],int n)
+{
+printf("elements in array are : ");
+for(int i=0;i<n;i++)
+{
+printf("%d\n",A[i]);
+}
+}
+int main()
+{
+int n;
+int A[n];
+pid_t pid,ppid,a,b;
+pid=getpid();
+ ppid=getppid();
+ printf("the pid is %d\n",pid);
+printf("the ppid is %d\n",ppid);
+printf("enter number of elements in an array: ");
+scanf("%d",&n);
+accept(A,n);
+Display(A,n);
+pid=fork();
+printf("hello world\n");
+if(pid==-1)
+{
+printf("\nerror on fork");
+}
+else if(pid==0)
+{
+//sleep(5);
+printf("\nchild scope");
+bubble_sort_asc(A,n);
+ a=getpid();
+ b=getppid();
+ printf("\ni am child.the pid is %d\n",a);
+printf("i am parent.the ppid is %d\n",b);
+printf("the ascending sorting elements are :\n");
+Display(A,n);
+}
+else
+{
+system("ps -el|grep Z");
+wait(0);
+printf("\nparent scope");
+bubble_sort_des(A,n);
+ a=getpid();
+ b=getppid();
+printf("\ni am parent the pid is %d\n",a);
+printf("\ni am great parent the ppid is %d\n",b);
+printf("the descending sorting elements are :\n");
+Display(A,n);
+}
+}
+Output
+./a.out
+the pid is 2753
+the ppid is 2456
+enter number of elements in an array: 4
+enter elements in array : 2 6 4 1
+elements in array are : 2
+6
+4
+1
+hello world
+hello world
+child scope
+i am child.the pid is 2755
+i am parent.the ppid is 2753
+the ascending sorting elements are :
+elements in array are : 1
+2
+4
+6
+F S UID PID PPID C PRI NI ADDR SZ WCHAN TTY TIME CMD
+1 Z 1000 2755 2753 0 80 0 - 0 - pts/0 00:00:00 a.out <defunct>
+parent scope
+i am parent the pid is 2753
+i am great parent the ppid is 2456
+the descending sorting elements are :
+elements in array are : 6
+4
+2
+1

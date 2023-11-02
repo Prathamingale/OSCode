@@ -1,0 +1,515 @@
+
+
+Subject: Operating System Lab
+Problem Statement: Implement the C program for CPU Scheduling Algorithms: Shortest Job 
+First (Preemptive) and Round Robin with different arrival time.
+
+
+//Code
+
+
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct queue
+{
+int data[50],r,f;
+}Q;
+int delqueue(Q*);
+void enqueue(Q*,int);
+void tat_and_wt(int at[],int bt[],int toc[],int n)
+{
+int tat[10],wt[10],i;
+float x,y;
+for(i=1;i<=n;i++)
+{
+tat[i]=toc[i]-at[i];
+wt[i]=tat[i]-bt[i];
+x+=tat[i];
+y+=wt[i];
+}
+printf("\nProcess info\n");
+printf("\nProcess\t Arrival Time\t Burst Time\t Turn around time\t Waiting time\n");
+i=1;
+while(i<=n)
+2
+{
+printf("P%d\t %d\t\t %d\t\t %d\t\t\t %d\n",i,at[i],bt[i],tat[i],wt[i]);
+i++;
+}
+printf("\nAverage Turnaround Time :%.2f",x/n);
+printf("\nAverage Waiting Time :%.2f\n",y/n);
+}
+int main()
+{
+int p[10],n,at[10],bt[10],i=1,j,k=1,l;
+int op,tag=0,sum,temp,x,y,quantum,rr[20],trr[10],ack[10];
+int fcfs[10],sjfnp[10],sjfp[20],srt[20],tbt[20],toc[10];
+Q s;
+do
+{
+printf("\nMaIN MENU( Process Scheduling )");
+printf("\n1. Get Data");
+printf("\n2. View Data");
+printf("\n3. FCFS");
+printf("\n4. SJF( NP )");
+printf("\n5. SJF( P )");
+printf("\n6. Round Robin");
+printf("\n0. Exit\nEnter the choice :: ");
+scanf("%d",&op);
+switch(op)
+{
+case 1: tag=1;
+printf("\nEnter total no. of processes : ");
+3
+scanf("%d",&n);
+if(n<=0)
+{
+printf("\n\tINVALID INPUT\n");
+break;
+}
+printf("\nEnter the Specified Time for following processes");
+bt[0]=at[0]=0;
+tbt[0]=0;
+i=1;
+while(i<=n)
+{
+printf("\nP%d",i);
+while(1)
+{
+printf("\tarrival Time : ");
+scanf("%d",&at[i]);
+if(at[i]<0)
+{
+printf("\nEnter again-\n");
+continue;
+}
+else break;
+}
+while(1)
+{
+printf("\tburst Time : ");
+scanf("%d",&bt[i]);
+if(bt[i]<0)
+4
+{
+printf("\nEnter again-\n");
+continue;
+}
+else break;
+}
+i++;
+}break;
+case 2: if(!tag)
+{
+printf("\nPlease get Data first\n");
+break;
+}
+printf("\nProcess info\n");
+printf("\nProcess\t arrival Time\t burst Time\n");
+i=1;
+while(i<=n)
+{
+printf("P%d\t %d\t\t %d\n",i,at[i],bt[i]);
+i++;
+}break;
+case 3: if(!tag) 
+{
+printf("\nPlease get Data first\n");
+break;
+}
+for(i=0;i<=10;i++) 
+fcfs[i]=i;
+5
+for(i=1;i<n;i++)
+for(j=i+1;j<=n;j++)
+{
+if(at[fcfs[i]]>at[fcfs[j]])
+{
+temp=fcfs[i];
+fcfs[i]=fcfs[j];
+fcfs[j]=temp;
+}
+}
+printf("\nThe FCFS scheduling of process is : ");
+for(i=1;i<=n;i++)
+printf("| P%d ",fcfs[i]);
+printf("|\n\t\t\t\t");
+for(i=0;i<=n;i++)
+{
+sum=0;
+for(j=0;j<=i;j++)
+sum+=bt[fcfs[j]];
+printf(" %4d",sum);
+toc[fcfs[i]]=sum
+}tat_and_wt(at,bt,toc,n);
+break;
+case 4: if(!tag) //for SJF non
+{
+6
+printf("\nPlease get Data first\n");
+break;
+}
+for(i=0;i<=10;i++)
+sjfnp[i]=i;
+x=1;
+for(i=1;i<n;i++)
+if(at[x]>at[i])
+x=i;
+k=1;
+sjfnp[k++]=x;
+sjfnp[x]=1;
+x=bt[x]; 
+for(i=2;i<n;i++)
+{
+if( at[sjfnp[i]] <= x )
+{
+for(j=i+1;j<=n;j++)
+if( bt[sjfnp[i]] > bt[sjfnp[j]] )
+{
+temp=sjfnp[i];
+sjfnp[i]=sjfnp[j];
+sjfnp[j]=temp;
+}k++;
+}
+x=0;
+7
+for(l=1;l<k;l++)
+x+=bt[sjfnp[l]];
+}
+printf("\nThe SJF(Non-pre-emptive) scheduling of process is : ");
+for(i=1;i<=n;i++)
+printf("| P%d ",sjfnp[i]);
+printf("|\n\t\t\t\t\t\t");
+for(i=0;i<=n;i++)
+{
+sum=0;
+for(j=0;j<=i;j++)
+sum+=bt[sjfnp[j]];
+printf(" %4d",sum);
+toc[sjfnp[i]]=sum; 
+}tat_and_wt(at,bt,toc,n);
+break;
+case 5: if(!tag) 
+{
+printf("\nPlease get Data first\n");
+break;
+}
+for(i=0;i<=20;i++)
+{
+sjfp[i]=i;
+srt[i]=i;
+}
+x=1;
+8
+for(i=1;i<n;i++)
+if(at[x]>at[i])
+x=i;
+k=1;
+sjfp[k]=x;
+sum=0;
+for(i=1;i<=n;i++)
+{
+sum+=bt[i];
+tbt[i]=bt[i];
+}
+for(i=1;i<=sum;i++)
+{
+tbt[x]-=1;
+y=x;
+if(tbt[x]==0)
+{
+for(l=1;l<=n;l++)
+if(tbt[l]!=0)
+{
+x=l;
+break;
+}
+}
+for(j=1;j<=n;j++)
+{
+9
+if(at[j]<=i && tbt[j]>0)
+{
+if(tbt[j]<tbt[x])
+x=j;
+}
+}
+if(y!=x)
+{
+srt[k++]=i; 
+sjfp[k]=x; 
+}
+}srt[k]=sum;
+printf("\nThe SJF(Pre-emptive) scheduling of process is : ");
+for(i=1;i<=k;i++)
+printf("| P%d ",sjfp[i]);
+printf("|\n\t\t\t\t\t\t");
+for(i=0;i<=k;i++)
+printf("%5d",srt[i]);
+for(i=0;i<=n;i++)
+for(j=0;j<=k;j++)
+if(sjfp[j]==i)
+toc[i]=srt[j];
+tat_and_wt(at,bt,toc,n);
+break;
+case 6:if(!tag) //Round Robin
+{
+10
+printf("\nPlease get Data first\n");
+break;
+}
+printf("\nEnter the value of Quantum :: ");
+scanf("%d",&quantum);
+printf("\nThe Round Robin scheduling of process is : ");
+sum=0;s.f=s.r=-1;
+for(i=1;i<=n;i++)
+{
+tbt[i]=bt[i];
+trr[i]=i;
+sum+=bt[i]; 
+ack[i]=0;
+}
+for(i=1;i<n;i++)
+{
+for(j=i+1;j<=n;j++)
+{
+if(at[trr[i]]>at[trr[j]])
+{
+temp=trr[i];
+trr[i]=trr[j];
+trr[j]=temp;
+}
+}
+11
+}
+x=1;
+k=i=0;
+ack[trr[x]]=1;
+srt[k++]=0;
+while(i<sum)
+{
+if(quantum < tbt[trr[x]])
+{
+i+=quantum;
+tbt[trr[x]]-=quantum;
+printf("| P%d ",trr[x]);
+rr[k]=trr[x];
+srt[k++]=i;
+}
+else
+{
+i+=tbt[trr[x]];
+tbt[trr[x]]=0;
+printf("| P%d ",trr[x]);
+rr[k]=trr[x];
+srt[k++]=i;
+}
+for(j=1;j<=n;j++) 
+in queue first time
+{
+if(i>=at[trr[j]] && ack[trr[j]]!=1)
+{
+12
+ack[trr[j]]=1;
+enqueue(&s,trr[j]);
+}
+}
+if(tbt[trr[x]]!=0)
+enqueue(&s,trr[x]);
+temp=delqueue(&s); 
+from queue
+for(j=1;j<=n;j++)
+{
+if(temp==trr[j])
+{
+x=j;
+break;
+}
+}
+}
+printf("|\n\t\t\t\t\t");
+//Printing the time while scheduling
+for(i=0;i<k;i++)
+printf("%5d",srt[i]);
+//Calculate the time of completion
+for(i=1;i<=n;i++)
+for(j=1;j<=k;j++)
+if(rr[j]==i)
+toc[i]=srt[j];
+tat_and_wt(at,bt,toc,n);
+break;
+case 0: exit(0);
+13
+default:printf("\nINVaLID INPUT \n");
+}
+}while(op);
+return 0;
+}
+int delqueue(Q *q) 
+{
+int p;
+if(q->f!=-1)
+{
+p=q->data[q->f];
+if(q->r==q->f)
+q->r=q->f=-1;
+else
+q->f+=1;
+return(p);
+}
+}
+void enqueue(Q *q,int p) 
+{
+if(q->r==-1)
+q->r=q->f=0;
+else
+q->r+=1;
+q->data[q->r]=p;
+}
+Output
+MAIN MENU( Process Scheduling )
+1. Get Data
+2. View Data
+3. FCFS
+4. SJF( NP )
+5. SJF( P )
+6. Round Robin
+0. Exit
+Enter the choice :: 1
+Enter total no. of processes : 4
+Enter the Specified Time for following processes
+P1 arrival Time : 0
+burst Time : 3
+P2 arrival Time : 1
+burst Time : 6
+P3 arrival Time : 4
+burst Time : 4
+P4 arrival Time : 6
+burst Time : 2
+MAIN MENU( Process Scheduling )
+1. Get Data
+2. View Data
+3. FCFS
+15
+4. SJF( NP )
+5. SJF( P )
+6. Round Robin
+0. Exit
+Enter the choice :: 2
+Process info
+Process arrival Time burst Time
+P1 0 3
+P2 1 6
+P3 4 4
+P4 6 2
+MAIN MENU( Process Scheduling )
+1. Get Data
+2. View Data
+3. FCFS
+4. SJF( NP )
+5. SJF( P )
+6. Round Robin
+0. Exit
+Enter the choice :: 3
+The FCFS scheduling of process is : | P1 | P2 | P3 | P4 |
+0 3 9 13 15
+Process info
+Process Arrival Time Burst Time Turn around time Waiting time
+16
+P1 0 3 3 0
+P2 1 6 8 2
+P3 4 4 9 5
+P4 6 2 9 7
+Average Turnaround Time :12194921146200500058718208.00
+Average Waiting Time :3.50
+MAIN MENU( Process Scheduling )
+1. Get Data
+2. View Data
+3. FCFS
+4. SJF( NP )
+5. SJF( P )
+6. Round Robin
+0. Exit
+Enter the choice :: 4
+The SJF(Non-pre-emptive) scheduling of process is : | P1 | P4 | P3 | P2 |
+0 3 5 9 15
+Process info
+Process Arrival Time Burst Time Turn around time Waiting time
+P1 0 3 3 0
+P2 1 6 14 8
+P3 4 4 5 1
+P4 6 2 -1 -3
+Average Turnaround Time :12194921146200500058718208.00
+17
+Average Waiting Time :5.00
+MAIN MENU( Process Scheduling )
+1. Get Data
+2. View Data
+3. FCFS
+4. SJF( NP )
+5. SJF( P )
+6. Round Robin
+0. Exit
+Enter the choice :: 5
+The SJF(Pre-emptive) scheduling of process is : | P1 | P2 | P3 | P4 | P2 |
+20 3 4 8 10 15
+Process info
+Process Arrival Time Burst Time Turn around time Waiting time
+P1 0 3 3 0
+P2 1 6 14 8
+P3 4 4 4 0
+P4 6 2 4 2
+Average Turnaround Time :12194921146200500058718208.00
+Average Waiting Time :7.50
+MAIN MENU( Process Scheduling )
+1. Get Data
+2. View Data
+3. FCFS
+18
+4. SJF( NP )
+5. SJF( P )
+6. Round Robin
+0. Exit
+Enter the choice :: 6
+Enter the value of Quantum :: 1
+The Round Robin scheduling of process is : | P1 | P2 | P1 | P2 | P1 | P3 | P2 | P4 | P3 | P2 | 
+P4 | P3 |
+P2 | P3 | P2 |
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+Process info
+Process Arrival Time Burst Time Turn around time Waiting time
+P1 0 3 5 2
+P2 1 6 14 8
+P3 4 4 10 6
+P4 6 2 5 3
+Average Turnaround Time :12194921146200500058718208.00
+Average Waiting Time :12.25
+MAIN MENU( Process Scheduling )
+1. Get Data
+2. View Data
+3. FCFS
+4. SJF( NP )
+5. SJF( P )
+6. Round Robin
+19
+0. Exit
+Enter the choice :: 6
+Enter the value of Quantum :: 2
+The Round Robin scheduling of process is : | P1 | P2 | P1 | P3 | P2 | P4 | P3 | P2 |
+0 2 4 5 7 9 11 13 15
+Process info
+Process Arrival Time Burst Time Turn around time Waiting time
+P1 0 3 5 2
+P2 1 6 14 8
+P3 4 4 5 1
+P4 6 2 5 3
+Average Turnaround Time :12194921146200500058718208.00
+Average Waiting Time :15.75
+MAIN MENU( Process Scheduling )
+1. Get Data
+2. View Data
+3. FCFS
+4. SJF( NP )
+5. SJF( P )
+6. Round Robin
+0. Exit

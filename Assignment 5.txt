@@ -1,0 +1,153 @@
+
+Aim: Implement the C program for Deadlock Avoidance Algorithm: Bankers 
+Algorithm. 
+#include <stdio.h> 
+#include <conio.h> 
+int main() { int alloc[20][20], max_need[20][20], available[20] = {0}, need[20][20], 
+total_resources[20]; int finished[20] = {0}; int num_processes, num_resources, flag, 
+exec_flag, executed; 
+ 
+ printf("Enter the number of processes: "); scanf("%d", 
+&num_processes); 
+ 
+ printf("Enter the number of resources: "); scanf("%d", 
+&num_resources); 
+ 
+ printf("Enter the maximum instances of each resource:\n"); 
+for (int res = 0; res < num_resources; res++) { printf("Number 
+of instances of resource #%d: ", res); scanf("%d", 
+&total_resources[res]); 
+ } 
+ 
+ printf("Enter the maximum requirement of each process:\n"); 
+for (int process = 0; process < num_processes; process++) 
+{ printf("Process #%d:\n", process); for (int res = 0; res 
+< num_resources; res++) { printf("Requirement for resource 
+
+#%d: ", res); 
+ scanf("%d", &max_need[process][res]); 
+ } 
+ } 
+ 
+ printf("Enter the current allocation for each process:\n"); for 
+(int process = 0; process < num_processes; process++) 
+{ printf("Process #%d:\n", process); for (int res = 0; res 
+< num_resources; res++) { printf("Allocation for resource 
+#%d: ", res); scanf("%d", &alloc[process][res]); 
+ } 
+ } 
+ for (int res = 0; res < num_resources; res++) { for (int process 
+= 0; process < num_processes; process++) { available[res] += 
+alloc[process][res]; 
+ } 
+ available[res] = total_resources[res] - available[res]; 
+ } 
+ printf("The available instances of each resource are:\n"); for 
+(int res = 0; res < num_resources; res++) { printf("Resource 
+#%d: %d\n", res, available[res]); 
+ } 
+ for (int process = 0; process < num_processes; process++) 
+{ for (int res = 0; res < num_resources; res++) { 
+ need[process][res] = max_need[process][res] - alloc[process][res]; 
+ } 
+
+ } 
+ printf("\nThe NEED matrix is:\n\n"); for (int process = 0; 
+process < num_processes; process++) { for (int res = 0; res 
+< num_resources; res++) { printf("%d\t", need[process]
+[res]); 
+ } 
+ printf("\n\n"); 
+ } 
+ printf("The processes are executed in the following sequence:\n\n"); 
+executed = 0; 
+ do { 
+ for (int process = 0, exec_flag = 0; process < num_processes; process++) 
+{ flag = 0; if (finished[process] != 0) continue; else { 
+ for (int res = 0; res < num_resources; res++) 
+{ if (need[process][res] > available[res]) 
+{ flag = 1; break; 
+ } 
+ } 
+ if (flag == 0) { printf("P%d\t", 
+process); finished[process] = 1; for 
+(int res = 0; res < num_resources; res++) 
+{ available[res] += alloc[process][res]; 
+ } 
+ exec_flag = 1; 
+executed++; 
+ } 
+ } 
+
+ } 
+ if (exec_flag == 0) { printf("\n\nThe system is 
+in an unsafe state!\n"); 
+ break; 
+ } 
+ } while (executed < num_processes); 
+ return 0; 
+} 
+OUTPUT:
+Enter no. of processes: 5
+Enter no. of resources: 3
+Enter the maximum instances of each resource:
+ No. of instances of resource #0: 10
+ No. of instances of resource #1: 5
+ No. of instances of resource #2: 7
+Enter the maximum requirement of each process:
+Process #0:
+ Requirement for resource #0: 7
+ Requirement for resource #1: 5
+ Requirement for resource #2: 3
+Process #1:
+ Requirement for resource #0: 3
+
+ Requirement for resource #1: 2
+ Requirement for resource #2: 2
+Process #2:
+ Requirement for resource #0: 9
+ Requirement for resource #1: 0
+ Requirement for resource #2: 2
+Process #3:
+ Requirement for resource #0: 2
+ Requirement for resource #1: 2
+ Requirement for resource #2: 2
+Process #4:
+ Requirement for resource #0: 4
+ Requirement for resource #1: 3
+ Requirement for resource #2: 3
+Enter the current allocation for each process:
+Process #0:
+ Allocation for resource #0: 0
+ Allocation for resource #1: 1
+ Allocation for resource #2: 0
+Process #1:
+ Allocation for resource #0: 2
+ Allocation for resource #1: 0
+ Allocation for resource #2: 0
+
+Process #2:
+ Allocation for resource #0: 3
+ Allocation for resource #1: 0
+ Allocation for resource #2: 2
+Process #3:
+ Allocation for resource #0: 2
+ Allocation for resource #1: 1
+ Allocation for resource #2: 1
+Process #4:
+ Allocation for resource #0: 0
+ Allocation for resource #1: 0
+ Allocation for resource #2: 2
+The available instances of each resource are:
+Resource #0: 3
+Resource #1: 3
+Resource #2: 2
+The NEED matrix is:
+ 7 4 3
+ 1 2 2
+ 6 0 0
+ 0 1 1
+ 4 3 1 
+The processes are executed in the foll. sequence:
+
+ P1 P3 P4 P0 P2

@@ -1,0 +1,232 @@
+
+
+
+# // Problem Statement: Write a program to implement an address book with options given 
+# // below: a) Create address book. b) View address book. c) Insert a record. d) Delete a record. 
+# // e) Modify a record. f) Exit
+
+# //Code: 
+
+echo "enter filename: ";
+read fname
+touch $fname
+ch=0
+while [ $ch -le '6' ]
+do
+echo -n -e "\tMenu\n 1.Create address book\n 2.View the address book\n 
+3.Insert into address book \n 4.Delete record from address book\n 5.Modify 
+record from address book\n 6.Exit"
+echo -n -e "\nenter your choice: "
+read ch
+case $ch in
+1)
+echo "How many numbers of records do you want in address book:"
+read n
+for ((i=0;i<$n;i++))
+do
+echo "enter employee id:"
+read eid
+echo "enter employee name:"
+read ename
+echo "enter employee mobile no.:"
+read emob
+echo "enter employee address:"
+read eadd
+echo "enter employee salary:"
+read esal
+echo -n -e "\t $eid \t $ename \t $emob \t $eadd \t $esal
+\n">>$fname
+done
+;;
+2)
+cat $fname
+;;
+3) echo "How many numbers of records do you want to insert in address 
+book:"
+read n
+for ((i=0;i<$n;i++))
+do
+echo "enter employee id:"
+read eid
+echo "enter employee name:"
+read ename
+echo "enter employee mobile no.:"
+read emob
+echo "enter employee address:"
+read eadd
+echo "enter employee salary:"
+read esal
+echo -n -e "\t $eid \t $ename \t $emob \t $eadd \t $esal \n">>
+$fname
+done
+;;
+4) 
+echo "enter eid of record you want to delete: "
+read eid
+if grep -w $eid $fname
+then
+grep -wv $eid $fname>>temp
+rm $fname
+mv temp $fname
+echo "record deleted"
+else
+echo "record not found"
+fi
+;;
+5)
+echo "enter eid of record you want to modify: "
+read eid
+if grep -w $eid $fname
+then
+grep -wv $eid $fname>>temp
+rm $fname
+mv temp $fname
+echo "enter new employee id:"
+read eid
+echo "enter new employee name:"
+read ename
+echo "enter new employee mobile no.:"
+read emob
+echo "enter new employee address:"
+read eadd
+echo "enter new employee salary:"
+read esal
+echo -n -e "\t $eid \t $ename \t $emob \t $eadd \t $esal
+\n">>$fname
+else
+echo "record not found"
+fi
+;;
+6)
+echo "invalid choice,try again"
+;;
+esac
+done
+// Output: 
+// student@student:~$ cd skn
+// student@student:~/skn$ bash ass2.sh
+// enter filename: 
+// aaa
+// Menu
+// 1.Create address book
+// 2.View the address book
+// 3.Insert into address book 
+// 4.Delete record from address book
+// 5.Modify record from address book
+// 6.Exit
+// enter your choice: 1
+// How many numbers of records do you want in address book:
+// 3
+// enter employee id:
+// 1
+// enter employee name:
+// Ram
+// enter employee mobile no.:
+// 456789
+// enter employee address:
+// pune
+// enter employee salary:
+// 120450
+// enter employee id:
+// 2
+// enter employee name:
+// Sham
+// enter employee mobile no.:
+// 1234567
+// enter employee address:
+// mumbai
+// enter employee salary:
+// 20000
+// enter employee id:
+// 3
+// enter employee name:
+// Shiva
+// enter employee mobile no.:
+// 234567
+// enter employee address:
+// nagar
+// enter employee salary:
+// 15000
+// Menu
+// 1.Create address book
+// 2.View the address book
+// 3.Insert into address book 
+// 4.Delete record from address book
+// 5.Modify record from address book
+// 6.Exit
+// enter your choice: 2
+// 1 Ram 456789 pune 120450 
+// 2 Sham 1234567 mumbai 20000 
+// 3 Shiva 234567 nagar 15000 
+// Menu
+// 1.Create address book
+// 2.View the address book
+// 3.Insert into address book 
+// 4.Delete record from address book
+// 5.Modify record from address book
+// 6.Exit
+// enter your choice: 3
+// How many numbers of records do you want to insert in address book:
+// 1
+// enter employee id:
+// 4
+// enter employee name:
+// siya
+// enter employee mobile no.:
+// 123456
+// enter employee address:
+// pune
+// enter employee salary:
+// 13000
+// Menu
+// 1.Create address book
+// 2.View the address book
+// 3.Insert into address book 
+// 4.Delete record from address book
+// 5.Modify record from address book
+// 6.Exit
+// enter your choice: 4
+// enter eid of record you want to delete: 
+// 2
+// 2 riya 1234567 mumbai 20000 
+// record deleted
+// Menu
+// 1.Create address book
+// 2.View the address book
+// 3.Insert into address book 
+// 4.Delete record from address book
+// 5.Modify record from address book
+// 6.Exit
+// enter your choice: 5
+// enter eid of record you want to modify: 
+// 1
+// 1 diya 456789 pune 12000 
+// enter new employee id:
+// 1
+// enter new employee name:
+// aryan
+// enter new employee mobile no.:
+// 456790
+// enter new employee address:
+// pune
+// enter new employee salary:
+// 10000
+// Menu
+// 1.Create address book
+// 2.View the address book
+// 3.Insert into address book 
+// 4.Delete record from address book
+// 5.Modify record from address book
+// 6.Exit
+// enter your choice: 2
+// 3 arya 234567 nagar 15000 
+// 4 siya 123456 pune 13000 
+// 1 aryan 456790 pune 10000 
+// Menu
+// 1.Create address book
+// 2.View the address book
+// 3.Insert into address book 
+// 4.Delete record from address book
+// 5.Modify record from address book
+// 6.Exit
+// enter your choice:
