@@ -1,0 +1,43 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<sys/stat.h>
+#include<fcntl.h>
+#define Max_Buff 1024 // Size of shared meomory segment
+
+int main()
+{
+	int fd1,fd2,c=0;
+	char * fifo1="fifo1";
+	char * fifo2="fifo2";
+	
+	
+	char buff[Max_Buff];
+	char str;
+	int res;
+	
+	res=mkfifo(fifo1,0777); // mkfifo creates the FIFO pipe mkfifo(pathname, filemode)
+	if(res==-1)
+	{
+		printf("\nPipe 1 is not created"); // ERROR
+		return 0;
+	}
+	
+	printf("\nEnter the string:\n");
+	fd1=open(fifo1,O_WRONLY); // Open_For_Write_ONLY
+	while((str=getchar())!='.')
+		buff[c++]=str; //c++ occurs are last only str is stored in buff[c]
+	buff[c]='\0'; // last line is NULL
+	
+	write(fd1,buff,sizeof(buff));
+	close(fd1);
+	
+	fd2=open(fifo2,O_RDONLY); // Open_For_Read_ONLY
+	read(fd2,&buff,Max_Buff); //Read from Max_buff and Stores it in buff
+	
+	printf("\nContents of files:\n %s \n",buff);
+	close(fd2);
+	unlink(fifo2);
+	
+	return 0;
+}
+

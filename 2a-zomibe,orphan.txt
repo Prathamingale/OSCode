@@ -1,0 +1,131 @@
+#include<stdio.h>
+
+int a_sort(int a[],int l);
+int d_sort(int a[],int l);
+
+int main()
+{
+
+	int a[10];
+	int l;
+	int pid,ppid;
+	// display and all stuff are the parent scope ka thing	
+	// To take and Display elements
+	printf("Enter the limit : ");
+	scanf("%d",&l);
+	int i;
+	for(i = 0 ;i < l ; i++)
+	{
+		scanf("%d",&a[i]);
+	}
+
+	printf("\n Displaying the array \n");
+	
+	for(i = 0 ;i < l ; i++)
+	{
+		printf("%d\t",a[i]);
+	}
+	
+//else woh zombie dekh sakte ho with the help of wait direct fir child ki sleep ko comment karo
+// sleep kara toh zombie 
+// parent sleep kara toh orphan	
+	pid = fork();
+	
+	if(pid == -1)
+	{
+		printf("ERROR!! ");
+			printf("\n");
+	}
+	else if (pid == 0)
+	{
+	sleep(7);
+	
+	printf("\n In child\n");
+	pid = getpid();
+	ppid = getppid();
+	printf("The Parent id(PID) of child is : %d \n The Parent Process id(PPID) of parent is : %d",pid,ppid);
+	system("ps -el|grep systemd");
+	a_sort(a,l);
+		printf("\n");
+		
+	}
+	else
+	{
+
+	int i;
+	i = wait(0);
+	printf("\nThe terminated process's id which is in zombie state is : %d\n",i);
+	system("ps -el|grep Z");
+	printf("\n In Parent\n");
+	pid = getpid();
+	ppid = getppid();
+	printf("The Parent id(PID) of parent is : %d \n The Parent Process id(PPID) of grand parent(bash) is : %d",pid,ppid);
+	d_sort(a,l);
+		printf("\n");
+	}
+		
+	printf("\n");
+
+	return 0;
+}
+
+
+int	a_sort(int a[],int l)
+	{
+		int i ;
+		for(i = 0 ; i<l ; i++)
+		{
+			int j;
+			for (j =i+1 ;j<l ; j++)
+			{
+				if(a[j]<a[i])
+				{
+					int temp = 0;
+					temp = a[i];
+					a[i] = a[j];
+					a[j] = temp;
+					
+					
+				}
+			}
+		}
+		
+		printf("\n Sorted array in ascending order is : \n");
+		
+		for(i = 0 ;i < l ; i++)
+		{
+			printf("%d\t",a[i]);
+		}
+	
+	}
+
+
+int	d_sort(int a[],int l)
+	{
+		int i ;
+		for(i = 0 ; i<l ; i++)
+		{
+			int j;
+			for (j =i+1 ;j<l ; j++)
+			{
+				if(a[j]>a[i])
+				{
+					int temp = 0;
+					temp = a[i];
+					a[i] = a[j];
+					a[j] = temp;
+					
+					
+				}
+			}
+		}
+		
+		printf("\n Sorted array in descending order is : \n");
+		
+		for(i = 0 ;i < l ; i++)
+		{
+			printf("%d\t",a[i]);
+		}
+	
+	}
+
